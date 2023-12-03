@@ -1,11 +1,13 @@
 import React, {useState} from 'react';
-import DiceInterface from "../interfaces/index";
+import DiceInterface from "../interfaces/dice";
+import ModifiersInterface from "../interfaces/modifiers";
 
 function Dice() {
     const [randomNumber, setRandomNumber] = useState<number>(0);
     const [diceResults, setDiceResults] = useState<number[]>([]);
     const [selectedDice, setSelectedDice] = useState<keyof DiceInterface | null>(null);
     const [diceCount, setDiceCount] = useState<number>(0);
+    const [totalModifier, setTotalModifier] = useState<number>(0);
 
     const diceValues: DiceInterface = {
         d20: 20,
@@ -14,6 +16,18 @@ function Dice() {
         d8: 8,
         d6: 6,
         d4: 4,
+    };
+
+    const decreaseValues: ModifiersInterface = {
+        '-1': -1,
+        '-3': -3,
+        '-5': -5,
+    };
+
+    const increaseValues: ModifiersInterface = {
+        '1': 1,
+        '3': 3,
+        '5': 5,
     };
 
     const rollDie = (sides: number) => {
@@ -28,7 +42,7 @@ function Dice() {
         const results = Array.from({length: count}, () => rollDie(sides));
         const totalResult = results.reduce((sum, result) => sum + result, 0);
         setDiceResults(results);
-        setRandomNumber(totalResult);
+        setRandomNumber(totalResult + totalModifier);
     };
 
     const handleDiceButtonClick = (diceType: keyof DiceInterface) => {
@@ -38,6 +52,10 @@ function Dice() {
             setSelectedDice(diceType);
             setDiceCount(1);
         }
+    };
+
+    const handleModifierButtonClick = (modifierValue: number) => {
+        setTotalModifier((prevTotal) => prevTotal + modifierValue);
     };
 
     const handleRollButtonClick = () => {
@@ -51,7 +69,8 @@ function Dice() {
         setDiceCount(0);
         setDiceResults([]);
         setRandomNumber(0);
-    }
+        setTotalModifier(0);
+    };
 
     return (
         <div className="text-center mt-8">
@@ -67,6 +86,36 @@ function Dice() {
                     </button>
                 ))}
             </div>
+            <div className="flex flex-col gap-2 justify-center">
+                <div className="flex justify-center">
+                    {Object.keys(decreaseValues).map((decreaseValueKey) => {
+                        const decreaseValue = parseInt(decreaseValueKey, 10);
+                        return (
+                            <button
+                                key={decreaseValueKey}
+                                className="m-2"
+                                onClick={() => handleModifierButtonClick(decreaseValue)}
+                            >
+                                {decreaseValue}
+                            </button>
+                        );
+                    })}
+                </div>
+                <div className="flex justify-center">
+                    {Object.keys(increaseValues).map((increaseValueKey) => {
+                        const increaseValue = parseInt(increaseValueKey)
+                        return (
+                            <button
+                                key={increaseValue}
+                                className="m-2"
+                                onClick={() => handleModifierButtonClick(increaseValue)}
+                            >
+                                {increaseValue}
+                            </button>
+                        );
+                    })}
+                </div>
+            </div>
             <div className="flex justify-center mt-4">
                 <button className="m-2" onClick={handleRollButtonClick}>
                     ROLL
@@ -75,19 +124,27 @@ function Dice() {
                     Clear
                 </button>
             </div>
-            <div className="text-2xl font-bold mt-4">
-                Seçilen Zar Türü:
-                {selectedDice && (
-                    <span className="px-2">{diceCount}{selectedDice} </span>
-                )}
-            </div>
-            {randomNumber !== null && (
+            <div>
                 <div className="text-2xl font-bold mt-4">
-                    Toplam Sonuç: {randomNumber} (Zarlar: {diceResults.join(', ')})
+                    Seçilen Zar Türü:
+                    {selectedDice && (
+                        <span className="px-2">{diceCount} {selectedDice} </span>
+                    )}
                 </div>
-            )}
+                <div>
+                    Modifiers: <span className="px-2"> {totalModifier} </span>
+                </div>
+            </div>
+            {
+                randomNumber !== null && (
+                    <div className="text-2xl font-bold mt-4">
+                        Toplam Sonuç: {randomNumber} (Zarlar: {diceResults.join(', ')} + {totalModifier})
+                    </div>
+                )
+            }
         </div>
-    );
+    )
+        ;
 }
 
 export default Dice;
