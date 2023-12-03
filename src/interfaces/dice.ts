@@ -7,4 +7,6 @@ interface DiceInterface {
     d4: number;
 }
 
+
 export default DiceInterface;
+
