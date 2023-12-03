@@ -1,10 +1,10 @@
 import React from 'react';
-import Dice from './components/Dice';
+import DiceComponent from "./components/DiceComponent";
 
 function App() {
   return (
     <div>
-      <Dice />
+        <DiceComponent/>
     </div>
   );
 }
