@@ -2,11 +2,13 @@ import React from 'react';
 import DiceComponent from "./components/DiceComponent";
 
 function App() {
-  return (
-    <div>
-        <DiceComponent/>
-    </div>
-  );
+    return (
+        <body className="h-screen  overflow-hidden bg-neutral-900 font-body">
+        <div className="overflow-hidden">
+            <DiceComponent/>
+        </div>
+        </body>
+    );
 }
 
 export default App;
